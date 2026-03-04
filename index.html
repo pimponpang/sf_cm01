@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CareerMap — SocioFuture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  :root {
+    --navy: #1B2E45;
+    --navy2: #FFFFFF;
+    --teal: #0070C0;
+    --teal-dim: #005fa3;
+    --gold: #D4860A;
+    --white: #1A2B3C;
+    --gray: #6B7A8D;
+    --light: #E8EDF5;
+    --panel: #F7F9FC;
+    --border: #DDE3EC;
+    --bg: #F0F3F8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── Header ─── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 56px;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+  }
+
+  nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-weight: 500;
+  }
+
+  nav button:hover { color: var(--white); background: rgba(0,0,0,0.05); }
+  nav button.active { color: var(--teal); background: rgba(0,112,192,0.08); }
+
+  /* ─── Main Layout ─── */
+  .app {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ─── Left Panel ─── */
+  .sidebar {
+    width: 280px;
+    background: #FFFFFF;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-sub {
+    font-size: 12px;
+    color: var(--gray);
+  }
+
+  .sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+
+  .sidebar-content::-webkit-scrollbar { width: 4px; }
+  .sidebar-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Area list */
+  .area-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+
+  .area-item:hover { background: var(--bg); }
+  .area-item.active {
+    background: rgba(0,112,192,0.06);
+    border-left-color: var(--teal);
+  }
+
+  .area-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .area-info { flex: 1; }
+  .area-name { font-size: 13px; font-weight: 500; }
+  .area-count { font-size: 11px; color: var(--gray); margin-top: 1px; }
+
+  /* Job list */
+  .job-item {
+    padding: 8px 20px 8px 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--gray);
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    margin-left: 17px;
+  }
+
+  .job-item:hover { color: var(--white); background: var(--bg); }
+  .job-item.active { color: var(--teal); border-left-color: var(--gold); background: rgba(212,134,10,0.05); }
+
+  .job-badge {
+    font-size: 9px;
+    background: var(--gold);
+    color: #FFFFFF;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* Tag section */
+  .tags-section { padding: 12px 20px; }
+  .tags-label { font-size: 11px; color: var(--gray); margin-bottom: 8px; font-weight: 500; }
+  .tags-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+  .tag-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--gray);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .tag-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .tag-btn.active { background: var(--teal); border-color: var(--teal); color: #FFFFFF; font-weight: 700; }
+
+  /* ─── Main Content ─── */
+  .main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* Building View */
+  .building-view {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .view-label {
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .view-label span { color: var(--teal); }
+
+  .building-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .building {
+    width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .building-label {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+
+  .floor {
+    border-radius: 12px;
+    padding: 18px 24px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .floor:hover { transform: translateX(6px) scale(1.01); border-color: #aac4df; }
+  .floor.active { border-color: var(--teal); transform: translateX(8px); }
+
+  .floor-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+  }
+
+  .floor-en {
+    font-size: 10px;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1px;
+  }
+
+  .floor-f1 { background: linear-gradient(135deg, #EEF4FB, #E0EBF7); }
+  .floor-f2 { background: linear-gradient(135deg, #EEF7F5, #DCF0EC); }
+  .floor-f3 { background: linear-gradient(135deg, #FBF5EE, #F5E8D8); }
+  .floor-f4 { background: linear-gradient(135deg, #F5EEF8, #EAD8F2); }
+
+  .floor.active.floor-f1 { box-shadow: 0 0 0 1.5px var(--teal), 0 8px 24px rgba(0,112,192,0.12); }
+  .floor.active.floor-f2 { box-shadow: 0 0 0 1.5px var(--teal), 0 8px 24px rgba(0,112,192,0.12); }
+  .floor.active.floor-f3 { box-shadow: 0 0 0 1.5px var(--teal), 0 8px 24px rgba(0,112,192,0.12); }
+  .floor.active.floor-f4 { box-shadow: 0 0 0 1.5px var(--teal), 0 8px 24px rgba(0,112,192,0.12); }
+
+  .floor-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .floor-icon { font-size: 20px; }
+
+  .floor-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .floor-en {
+    font-size: 10px;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1px;
+  }
+
+  .floor-jobs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .floor-job-pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 20px;
+    color: var(--gray);
+    transition: all 0.15s;
+    cursor: pointer;
+    border: 1px solid var(--border);
+  }
+
+  .floor-job-pill:hover {
+    background: rgba(0,112,192,0.08);
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  .floor-job-pill.recruiting {
+    background: rgba(212,134,10,0.08);
+    color: var(--gold);
+    border-color: rgba(212,134,10,0.3);
+  }
+
+  /* ─── Detail Panel ─── */
+  .detail-panel {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #FFFFFF;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-panel.open {
+    width: 360px;
+  }
+
+  .detail-inner {
+    width: 360px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 24px 20px;
+  }
+
+  .detail-inner::-webkit-scrollbar { width: 4px; }
+  .detail-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .detail-close {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--gray);
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .detail-close:hover { background: var(--border); color: var(--white); }
+
+  .detail-header { position: relative; margin-bottom: 20px; padding-right: 36px; }
+
+  .detail-area-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    color: var(--teal);
+    background: rgba(0,194,168,0.1);
+    border: 1px solid rgba(0,194,168,0.3);
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .detail-job-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .detail-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .badge-recruit { background: var(--gold); color: #FFFFFF; }
+  .badge-tag { background: var(--border); color: var(--white); }
+
+  .detail-section { margin-bottom: 20px; }
+
+  .detail-section-title {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-section p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--gray);
+  }
+
+  .career-case {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 3px solid var(--gold);
+    margin-top: 8px;
+  }
+
+  .career-case-label {
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .career-case-text {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  .related-jobs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .related-job-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.15s;
+    text-align: left;
+  }
+
+  .related-job-btn:hover {
+    background: rgba(0,112,192,0.05);
+    border-color: var(--teal);
+  }
+
+  .related-job-name { font-size: 12px; color: var(--white); }
+  .related-job-match { font-size: 10px; color: var(--teal); font-weight: 700; }
+
+  .match-high { color: var(--teal); }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 12px;
+    position: relative;
+  }
+
+  .timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 28px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-time {
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--teal);
+    font-weight: 700;
+    width: 30px;
+    padding-top: 4px;
+  }
+
+  .timeline-content {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 8px 10px;
+    flex: 1;
+  }
+
+  .timeline-content p { font-size: 11px; color: var(--gray); line-height: 1.6; }
+
+  /* ─── Tag View ─── */
+  .tag-view {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  .tag-matrix {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .matrix-header {
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .matrix-tag-group {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .matrix-tag-group:hover {
+    background: rgba(0,194,168,0.06);
+    border-color: var(--teal);
+  }
+
+  .matrix-tag-group.selected {
+    background: rgba(0,194,168,0.1);
+    border-color: var(--teal);
+  }
+
+  .matrix-tag-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .matrix-tag-desc {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  .search-results {
+    margin-top: 24px;
+  }
+
+  .results-count {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 12px;
+  }
+
+  .results-count span { color: var(--teal); font-weight: 700; font-size: 16px; }
+
+  .result-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .result-card:hover {
+    background: rgba(0,112,192,0.04);
+    border-color: var(--teal);
+    transform: translateX(4px);
+  }
+
+  .result-card-info { flex: 1; }
+  .result-card-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .result-card-area { font-size: 11px; color: var(--gray); }
+
+  .result-card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .result-mini-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    background: rgba(0,112,192,0.08);
+    color: var(--teal);
+    border-radius: 10px;
+  }
+
+  .result-arrow { color: var(--gray); font-size: 16px; margin-left: 12px; }
+
+  /* animations */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .floor { animation: fadeSlideIn 0.4s ease backwards; }
+  .floor:nth-child(1) { animation-delay: 0.05s; }
+  .floor:nth-child(2) { animation-delay: 0.1s; }
+  .floor:nth-child(3) { animation-delay: 0.15s; }
+  .floor:nth-child(4) { animation-delay: 0.2s; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    CareerMap
+  </div>
+  <nav>
+    <button class="active" onclick="switchView('building', this)">職種から探す</button>
+    <button onclick="switchView('tag', this)">タグから探す</button>
+    <button onclick="switchView('category', this)">カテゴリから探す</button>
+  </nav>
+  <div style="font-size:12px; color:var(--gray);">SocioFuture</div>
+</header>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">エリア</div>
+      <div class="sidebar-sub">クリックして職種を展開</div>
+    </div>
+    <div class="sidebar-content" id="sidebar-content">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Building View -->
+    <div class="building-view" id="view-building">
+      <div class="view-label">職種マップ › <span id="current-area-label">全エリア</span></div>
+      <div class="building-container">
+        <div class="building" id="building">
+          <!-- floors populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tag View -->
+    <div class="tag-view hidden" id="view-tag">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-inner" id="detail-inner">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  areas: [
+    {
+      id: 'center', name: 'センターエリア', icon: '', color: 'floor-f1',
+      jobs: [
+        { id: 'atm', name: 'ATM監視', tags: ['課題を解決する', '正確に処理する'], recruiting: false,
+          mission: '全国のATM稼働状況をリアルタイムで監視し、障害を即時解決。金融インフラを支える最前線の業務です。',
+          tasks: '24時間モニタリング、障害時の一次対応、レポート作成、改善提案。',
+          quals: ['金融関連資格', '情報処理技術者'],
+          timeline: [
+            { time: '9:00', text: '前夜の稼働ログ確認・引継ぎ' },
+            { time: '10:00', text: 'リアルタイム監視・異常検知対応' },
+            { time: '13:00', text: '定期レポート作成' },
+            { time: '15:00', text: '翌日対応の準備・チームMTG' },
+          ],
+          career: '監視→運用設計→インフラPM へのパスが典型。技術方向にも管理方向にも進みやすい。',
+          related: ['IB', 'バックオフィス']
+        },
+        { id: 'moushitsu', name: '喪失', tags: ['正確に処理する', '人と関わる'], recruiting: true,
+          mission: 'カードや通帳の紛失・盗難時の迅速対応で、お客様の不安を最小化します。',
+          tasks: '喪失受付対応、停止処理、再発行手続き、顧客への案内。',
+          quals: ['銀行業務検定'],
+          timeline: [
+            { time: '9:00', text: '受電対応開始・前日処理確認' },
+            { time: '11:00', text: '停止処理・システム入力' },
+            { time: '14:00', text: '再発行書類確認' },
+            { time: '16:30', text: '未処理件数確認・引継ぎ' },
+          ],
+          career: 'コールセンター全般の知識が身につき、管理職またはQA・研修方向へ。',
+          related: ['ATM監視', 'コールセンター']
+        },
+        { id: 'ib', name: 'IB', tags: ['課題を解決する', '正確に処理する'], recruiting: false,
+          mission: 'インターネットバンキングのサポートと不正取引監視。デジタル金融の信頼を守ります。',
+          tasks: 'IB操作サポート、不正アクセス疑義対応、システム障害時の一次窓口。',
+          quals: ['情報処理技術者', '銀行業務検定'],
+          timeline: [
+            { time: '9:00', text: 'システム正常確認・メール対応' },
+            { time: '10:30', text: '受電・チャット対応' },
+            { time: '13:30', text: '不正疑義レポート確認' },
+            { time: '16:00', text: 'ナレッジベース更新' },
+          ],
+          career: 'セキュリティ・デジタルバンキング専門職へ。社内DXプロジェクトへの参加機会も。',
+          related: ['ATM監視', 'バックオフィス']
+        },
+      ]
+    },
+    {
+      id: 'dev', name: '開発エリア', icon: '', color: 'floor-f2',
+      jobs: [
+        { id: 'back', name: 'バックオフィス', tags: ['正確に処理する', '整備・管理する'], recruiting: true,
+          mission: '業務フローの整備と社内システム連携の要。縁の下の力持ちとして全部門を支えます。',
+          tasks: 'データ管理、社内申請処理、システム改善提案、マニュアル整備。',
+          quals: ['MOS', 'ビジネス実務法務'],
+          timeline: [
+            { time: '9:00', text: '前日処理の確認・優先順位付け' },
+            { time: '10:00', text: 'データ処理・システム入力' },
+            { time: '14:00', text: '各部門からの問い合わせ対応' },
+            { time: '16:30', text: '翌日の準備・作業ログ記録' },
+          ],
+          career: '業務効率化・RPA推進担当への道が開ける。全業務を横断的に理解できる強みが生まれる。',
+          related: ['ATM監視', 'IB']
+        },
+      ]
+    },
+    {
+      id: 'sales', name: '営業・企画エリア', icon: '', color: 'floor-f3',
+      jobs: [
+        { id: 'signage', name: 'サイネージ新規企画', tags: ['提案して価値を届ける', '人と関わる'], recruiting: true,
+          mission: '店頭サイネージの新規企画立案から実装まで担当。ブランド体験を空間でデザインします。',
+          tasks: '企画提案、コンテンツ制作ディレクション、導入後の効果測定。',
+          quals: ['プロジェクトマネジメント資格', 'デジタルサイネージ知識'],
+          timeline: [
+            { time: '9:30', text: 'メール・Slackチェック・優先整理' },
+            { time: '10:30', text: 'クライアント打ち合わせ' },
+            { time: '14:00', text: '企画書作成・デザインレビュー' },
+            { time: '17:00', text: '翌週の進行確認' },
+          ],
+          career: 'プロダクトマネージャーまたはクリエイティブディレクター方向へ分岐しやすい職種。',
+          related: ['営業', '採用']
+        },
+        { id: 'sales', name: '営業', tags: ['提案して価値を届ける', '人と関わる'], recruiting: false,
+          mission: '課題ヒアリングから提案・契約まで一気通貫。お客様の成長を共に実現します。',
+          tasks: '新規開拓、提案営業、契約後のフォローアップ、案件管理。',
+          quals: ['FP技能士', '証券外務員'],
+          timeline: [
+            { time: '9:00', text: '当日訪問準備・社内共有' },
+            { time: '10:00', text: '顧客訪問・提案' },
+            { time: '14:00', text: '提案資料作成' },
+            { time: '17:00', text: 'SFA入力・上長報告' },
+          ],
+          career: '担当→リーダー→マネージャーが典型。事業企画やBizDevへの転換例も多い。',
+          related: ['サイネージ新規企画', '採用']
+        },
+      ]
+    },
+    {
+      id: 'hr', name: '人事エリア', icon: '', color: 'floor-f4',
+      jobs: [
+        { id: 'recruit', name: '採用', tags: ['人と関わる', '提案して価値を届ける'], recruiting: false,
+          mission: '未来の仲間を見つけ、入社までの体験をデザインする。人と組織をつなぐ架け橋です。',
+          tasks: '求人企画、面接、内定者フォロー、採用ブランディング。',
+          quals: ['キャリアコンサルタント', '人事部門向け資格'],
+          timeline: [
+            { time: '9:30', text: '応募者書類確認・面接調整' },
+            { time: '11:00', text: '面接・オファー面談' },
+            { time: '14:00', text: '採用媒体の管理・分析' },
+            { time: '16:00', text: '内定者へのフォロー連絡' },
+          ],
+          career: 'HRBPや組織開発職への転換が多い。採用ブランディング→マーケへの道も。',
+          related: ['労務', '教育研修']
+        },
+        { id: 'romo', name: '労務', tags: ['正確に処理する', '整備・管理する'], recruiting: false,
+          mission: '従業員が安心して働ける環境を制度・手続きから守る縁の下の存在。',
+          tasks: '給与計算、社会保険手続き、勤怠管理、規程整備。',
+          quals: ['社会保険労務士', '給与計算実務能力検定'],
+          timeline: [
+            { time: '9:00', text: '勤怠データ確認・異常アラート対応' },
+            { time: '10:30', text: '各種手続き処理' },
+            { time: '14:00', text: '給与計算・チェック' },
+            { time: '16:30', text: 'Q&A対応・規程確認' },
+          ],
+          career: '社労士取得→専門職。または人事企画・HRBPへのキャリアシフトが可能。',
+          related: ['採用', '教育研修']
+        },
+      ]
+    },
+  ]
+};
+
+let currentView = 'building';
+let activeArea = null;
+let activeJob = null;
+
+function getJobById(id) {
+  for (const area of DATA.areas) {
+    const job = area.jobs.find(j => j.id === id);
+    if (job) return { job, area };
+  }
+  return null;
+}
+
+function renderSidebar() {
+  const content = document.getElementById('sidebar-content');
+  content.innerHTML = '';
+  DATA.areas.forEach(area => {
+    const item = document.createElement('div');
+    item.className = 'area-item' + (activeArea === area.id ? ' active' : '');
+    item.innerHTML = `
+      
+      <div class="area-info">
+        <div class="area-name">${area.name}</div>
+        <div class="area-count">${area.jobs.length}職種</div>
+      </div>
+    `;
+    item.onclick = () => { activeArea = area.id; renderAll(); };
+    content.appendChild(item);
+
+    if (activeArea === area.id) {
+      area.jobs.forEach(job => {
+        const jitem = document.createElement('div');
+        jitem.className = 'job-item' + (activeJob === job.id ? ' active' : '');
+        jitem.innerHTML = `
+          <span>${job.name}</span>
+          ${job.recruiting ? '<span class="job-badge">公募中</span>' : ''}
+        `;
+        jitem.onclick = (e) => { e.stopPropagation(); openDetail(job.id); };
+        content.appendChild(jitem);
+      });
+    }
+  });
+}
+
+function renderBuilding() {
+  const building = document.getElementById('building');
+  building.innerHTML = '';
+  const label = document.getElementById('current-area-label');
+
+  const areasToShow = activeArea
+    ? DATA.areas.filter(a => a.id === activeArea)
+    : DATA.areas;
+
+  label.textContent = activeArea
+    ? DATA.areas.find(a => a.id === activeArea)?.name
+    : '全エリア';
+
+  areasToShow.forEach(area => {
+    const floor = document.createElement('div');
+    floor.className = `floor ${area.color}` + (activeArea === area.id ? ' active' : '');
+    const pills = area.jobs.map(j =>
+      `<span class="floor-job-pill ${j.recruiting ? 'recruiting' : ''}" onclick="event.stopPropagation();openDetail('${j.id}')">${j.name}${j.recruiting ? ' ★' : ''}</span>`
+    ).join('');
+    floor.innerHTML = `
+      <div class="floor-header">
+        
+        <div>
+          <div class="floor-title">${area.name}</div>
+          <div class="floor-en">${area.jobs.length} positions</div>
+        </div>
+      </div>
+      <div class="floor-jobs">${pills}</div>
+    `;
+    floor.onclick = () => { activeArea = activeArea === area.id ? null : area.id; renderAll(); };
+    building.appendChild(floor);
+  });
+}
+
+function openDetail(jobId) {
+  activeJob = jobId;
+  const result = getJobById(jobId);
+  if (!result) return;
+  const { job, area } = result;
+
+  const panel = document.getElementById('detail-panel');
+  const inner = document.getElementById('detail-inner');
+
+  const timeline = job.timeline.map(t =>
+    `<div class="timeline-item">
+      <div class="timeline-time">${t.time}</div>
+      <div class="timeline-content"><p>${t.text}</p></div>
+    </div>`
+  ).join('');
+
+  const related = job.related.map(name => {
+    const found = DATA.areas.flatMap(a => a.jobs).find(j => j.name === name);
+    return found ? `
+      <button class="related-job-btn" onclick="openDetail('${found.id}')">
+        <span class="related-job-name">${found.name}</span>
+        <span class="related-job-match match-high">マッチ度高</span>
+      </button>` : '';
+  }).join('');
+
+  const tagBadges = job.tags.map(t => `<span class="badge badge-tag">${t}</span>`).join('');
+
+  inner.innerHTML = `
+    <div class="detail-header">
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+      <div class="detail-area-tag">${area.name}</div>
+      <div class="detail-job-title">${job.name}</div>
+      <div class="detail-badges">
+        ${job.recruiting ? '<span class="badge badge-recruit">★ 公募中</span>' : ''}
+        ${tagBadges}
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">Mission</div>
+      <p>${job.mission}</p>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">業務内容</div>
+      <p>${job.tasks}</p>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">1日の仕事の流れ</div>
+      <div class="timeline">${timeline}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">キャリアケース</div>
+      <div class="career-case">
+        <div class="career-case-label">典型的なキャリアパス</div>
+        <div class="career-case-text">${job.career}</div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">同じ性質の職務</div>
+      <div class="related-jobs">${related}</div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">推奨資格</div>
+      <p>${job.quals.join(' / ')}</p>
+    </div>
+  `;
+
+  panel.classList.add('open');
+  renderSidebar();
+}
+
+function closeDetail() {
+  activeJob = null;
+  document.getElementById('detail-panel').classList.remove('open');
+  renderSidebar();
+}
+
+function renderTagView() {
+  const view = document.getElementById('view-tag');
+  const tags = ['人と関わる', '提案して価値を届ける', '課題を解決する', '正確に処理する', '整備・管理する'];
+  const tagDescs = {
+    '人と関わる': '顧客・社員・パートナーとの関係構築が仕事の中心',
+    '提案して価値を届ける': '課題を理解し、最適な解を提案・実行する',
+    '課題を解決する': '問題を特定し、プロセスや技術で解決する',
+    '正確に処理する': '正確さとスピードが求められるオペレーション業務',
+    '整備・管理する': 'ルール・環境・仕組みを整えて組織を支える',
+  };
+
+  let selected = null;
+
+  const render = () => {
+    const matchedJobs = selected
+      ? DATA.areas.flatMap(a => a.jobs.filter(j => j.tags.includes(selected)).map(j => ({ job: j, area: a })))
+      : [];
+
+    view.innerHTML = `
+      <div class="view-label">タグから探す › <span style="color:var(--teal)">${selected || '性質を選んでください'}</span></div>
+      <div class="matrix-header">あなたの仕事の性質は？</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; max-width:600px">
+        ${tags.map(t => `
+          <div class="matrix-tag-group ${selected === t ? 'selected' : ''}" onclick="selectTag('${t}')">
+            <div class="matrix-tag-name">${t}</div>
+            <div class="matrix-tag-desc">${tagDescs[t]}</div>
+          </div>
+        `).join('')}
+      </div>
+      ${selected ? `
+        <div class="search-results">
+          <div class="results-count">検索結果 <span>${matchedJobs.length}</span> 件</div>
+          ${matchedJobs.map(({ job, area }) => `
+            <div class="result-card" onclick="openDetail('${job.id}')">
+              <div class="result-card-info">
+                <div class="result-card-name">${job.name}</div>
+                <div class="result-card-area">${area.name}</div>
+                <div class="result-card-tags">${job.tags.map(t2 => `<span class="result-mini-tag">${t2}</span>`).join('')}</div>
+              </div>
+              <div class="result-arrow">›</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    `;
+  };
+
+  window.selectTag = (tag) => {
+    selected = selected === tag ? null : tag;
+    render();
+  };
+
+  render();
+}
+
+function switchView(view, btn) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('view-building').classList.toggle('hidden', view !== 'building');
+  document.getElementById('view-tag').classList.toggle('hidden', view !== 'tag');
+  document.getElementById('sidebar').style.display = view === 'building' ? 'flex' : 'none';
+
+  currentView = view;
+  if (view === 'tag') renderTagView();
+  if (view === 'building') renderAll();
+}
+
+function renderAll() {
+  renderSidebar();
+  renderBuilding();
+}
+
+renderAll();
+</script>
+</body>
+</html>
